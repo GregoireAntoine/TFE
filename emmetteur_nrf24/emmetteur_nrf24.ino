@@ -26,7 +26,7 @@ bool DebutAffichage=true;
 // variable pour faire la hauteur et les num de paires
 int TableauPaire[9][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30}}; // tableau des paires
 const int Hauteur = 1;
-const int ValPaire = 0;
+const int ValeurPaire = 0;
 int Paire = 0;
 int a;
 
@@ -118,7 +118,7 @@ while (digitalRead(BtnDescente)==HIGH){
   
   if(TableauPaire[Paire][Hauteur]>30){
   TableauPaire[Paire][Hauteur]=TableauPaire[Paire][Hauteur]-5;
-  Serial.println(TableauPaire[Paire][ValPaire]);
+  Serial.println(TableauPaire[Paire][ValeurPaire]);
   }
     
   while (digitalRead(BtnDescente)==HIGH){}
@@ -130,7 +130,7 @@ if(TableauPaire[Paire][Hauteur]<100){
   lcd.print(" ");
   }
  lcd.setCursor(8,0);
-  lcd.print(TableauPaire[Paire][ValPaire]);
+  lcd.print(TableauPaire[Paire][ValeurPaire]);
   lcd.setCursor(10,1);
   lcd.print(TableauPaire[Paire][Hauteur]);
   lcd.print("cm");
