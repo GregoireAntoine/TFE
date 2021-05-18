@@ -10,8 +10,10 @@
 #define CSN_PIN 10
 
 const uint64_t adresse = 0xE8E8F0F0E1LL;           // adresse du canal de communication
-int data[1];                             
+int data[1]={0};
 boolean leed = false;
+
+
 
 const int BtnDescente = 5;
 const int BtnMonte = 7;
@@ -26,7 +28,7 @@ bool DebutAffichage=true;
 // variable pour faire la hauteur et les num de paires
 int TableauPaire[9][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30}}; // tableau des paires
 const int Hauteur = 1;
-const int ValeurPaire = 0;
+const int ValPaire = 0;
 int Paire = 0;
 int a;
 
@@ -84,7 +86,7 @@ if (Curseur==true){
 
 //modification numéro de paires
 if(Curseur==true){
-  data[0]=1;
+  
   while (digitalRead(BtnMonte)==HIGH){
 if(Paire<8){
     
@@ -105,10 +107,10 @@ while (digitalRead(BtnDescente)==HIGH){
   }
 //modification hauteur de la paire
 if(Curseur==false){
-  data[0]=0;
+
   while (digitalRead(BtnMonte)==HIGH){
   if(TableauPaire[Paire][Hauteur]<150){
-    
+    data[0]=data[0]+5;
    TableauPaire[Paire][Hauteur]=TableauPaire[Paire][Hauteur]+5;
     
   }
@@ -117,8 +119,9 @@ if(Curseur==false){
 while (digitalRead(BtnDescente)==HIGH){
   
   if(TableauPaire[Paire][Hauteur]>30){
+    data[0]=data[0]-5;
   TableauPaire[Paire][Hauteur]=TableauPaire[Paire][Hauteur]-5;
-  Serial.println(TableauPaire[Paire][ValeurPaire]);
+  Serial.println(TableauPaire[Paire][ValPaire]);
   }
     
   while (digitalRead(BtnDescente)==HIGH){}
@@ -130,14 +133,14 @@ if(TableauPaire[Paire][Hauteur]<100){
   lcd.print(" ");
   }
  lcd.setCursor(8,0);
-  lcd.print(TableauPaire[Paire][ValeurPaire]);
+  lcd.print(TableauPaire[Paire][ValPaire]);
   lcd.setCursor(10,1);
   lcd.print(TableauPaire[Paire][Hauteur]);
   lcd.print("cm");
 
 
-   Serial.println(data[0]);
+   Serial.println(TableauPaire[0][1]);
     
     
-  radio.write( data, sizeof(data) );                               // envoi des données
+  radio.write( TableauPaire, sizeof(TableauPaire) );// envoi des données
   }

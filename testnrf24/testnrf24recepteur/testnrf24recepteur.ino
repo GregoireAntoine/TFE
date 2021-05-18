@@ -12,8 +12,15 @@ const uint64_t adresse = 0xE8E8F0F0E1LL;        // adresse du canal de communica
 
 RF24 radio(CE_PIN, CSN_PIN);                               // création de l'objet radio
 
-int data[1];
-int VieilleData[1];
+int TableauPaire[9][2]; // tableau des paires recu                                      
+int verif[9][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30}}; // tableau des paires;                                        //descente moteur
+
+const int stepPin = 5; 
+const int dirPin = 2; 
+const int enPin = 8;
+
+int paire=1;
+int pairetableau=0;
 
 void setup()   
 {
@@ -22,23 +29,67 @@ void setup()
   radio.openReadingPipe(1,adresse);                   // configuration du canal de communication du module NRF24L01     
   radio.startListening();                            // configuration du module NRF24L01 en récepteur
   
-  pinMode(2, OUTPUT); 
+  pinMode(3, OUTPUT); 
+pinMode(1, OUTPUT); 
+   pinMode(stepPin,OUTPUT); 
+  pinMode(dirPin,OUTPUT);
+
+  pinMode(enPin,OUTPUT);
+  digitalWrite(enPin,LOW);
 }
 
 
 void loop() {  
   if ( radio.available() )                                           // si des données sont présentes
   {
-    radio.read( data, sizeof(data) );                        // lecture des données
-    Serial.print("data[0]=");                                     // affichage dans le moniteur série
-    Serial.println(data[0]);
+    radio.read( TableauPaire, sizeof(TableauPaire) );                        // lecture des données
+    Serial.print(TableauPaire[pairetableau][1]);                                     // affichage dans le moniteur série
+   Serial.println(verif[pairetableau][1]);
     
-    if( data[0]!=VieilleData[0]){
-      digitalWrite(2,HIGH);
-      delay(2000);
-      digitalWrite(2, LOW);
-      }
-    
-     VieilleData[0]=data[0];
-  }
+   
+    while(verif[pairetableau][1]<TableauPaire[pairetableau][1]){
+      verif[pairetableau][1]=verif[pairetableau][1]+5;
+      augmentation();                                          //aumgentation hauteur barre
+      
+  
+    }
+
+    while(verif[pairetableau][1]>TableauPaire[pairetableau][1]){
+      verif[pairetableau][1]=verif[pairetableau][1]-5;
+      diminution();                                          //diminution hauteur barre
+      
+  
+    }
+
+
+ 
 }
+
+}
+
+
+void augmentation(){
+  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  // Makes 200 pulses for making one full cycle rotation
+  for(int x = 0; x < 1600; x++) {
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(500); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(500); 
+  }
+  }
+
+
+
+void diminution(){
+   digitalWrite(3, LOW);
+      digitalWrite(dirPin,LOW); //Changes the rotations direction
+  // Makes 400 pulses for making two full cycle rotation
+  
+  for(int x = 0; x < 1600; x++) {
+    digitalWrite(stepPin,HIGH);
+    delayMicroseconds(500);
+    digitalWrite(stepPin,LOW);
+    delayMicroseconds(500);
+  } }
+    
