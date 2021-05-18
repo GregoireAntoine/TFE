@@ -19,7 +19,10 @@ const int stepPin = 5;
 const int dirPin = 2; 
 const int enPin = 8;
 
-int paire=1;
+const int btnplus=7;
+const int btnmoins=6;
+
+
 int pairetableau=0;
 
 void setup()   
@@ -29,17 +32,34 @@ void setup()
   radio.openReadingPipe(1,adresse);                   // configuration du canal de communication du module NRF24L01     
   radio.startListening();                            // configuration du module NRF24L01 en récepteur
   
-  pinMode(3, OUTPUT); 
-pinMode(1, OUTPUT); 
+ 
    pinMode(stepPin,OUTPUT); 
   pinMode(dirPin,OUTPUT);
 
   pinMode(enPin,OUTPUT);
   digitalWrite(enPin,LOW);
+
+  pinMode(btnplus, INPUT);
+  pinMode(btnmoins, INPUT);
 }
 
 
 void loop() {  
+
+while(digitalRead(btnplus)){
+  if(pairetableau<=9){
+  pairetableau=pairetableau+1;
+  while(digitalRead(btnplus)){}
+  }}
+
+  while(digitalRead(btnmoins)){
+  if(pairetableau>0){
+  pairetableau=pairetableau-1;
+  while(digitalRead(btnmoins)){}
+  }}
+Serial.println(" paire tableau");
+Serial.println(pairetableau+1);   
+ Serial.println(" "); 
   if ( radio.available() )                                           // si des données sont présentes
   {
     radio.read( TableauPaire, sizeof(TableauPaire) );                        // lecture des données
@@ -82,7 +102,7 @@ void augmentation(){
 
 
 void diminution(){
-   digitalWrite(3, LOW);
+  
       digitalWrite(dirPin,LOW); //Changes the rotations direction
   // Makes 400 pulses for making two full cycle rotation
   
