@@ -12,18 +12,25 @@ const uint64_t adresse = 0xE8E8F0F0E1LL;        // adresse du canal de communica
 
 RF24 radio(CE_PIN, CSN_PIN);                               // création de l'objet radio
 
-int TableauPaire[9][2]; // tableau des paires recu                                      
-int verif[9][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30}}; // tableau des paires;                                        //descente moteur
+int TableauPaire[10][2]; // tableau des paires recu                                      
+int verif[10][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30},{10, 30}}; // tableau des paires;                                        //descente moteur
 
-const int stepPin = 5; 
-const int dirPin = 2; 
-const int enPin = 8;
+const int stepPin = 7;  //5
+const int dirPin = 6;   //2
+const int enPin = 8;    //8 
 
-const int btnplus=7;
-const int btnmoins=6;
+const int btnplus=A4;    
+const int btnmoins=A3;  
+
+const int btnun = 2;
+const int btndeux = 3;
+const int btnquatre = 4 ;
+const int btnhuit = 5;
+
 
 
 int pairetableau=0;
+
 
 void setup()   
 {
@@ -33,59 +40,126 @@ void setup()
   radio.startListening();                            // configuration du module NRF24L01 en récepteur
   
  
-   pinMode(stepPin,OUTPUT); 
-  pinMode(dirPin,OUTPUT);
+    pinMode(stepPin,OUTPUT); 
+    pinMode(dirPin,OUTPUT);
 
-  pinMode(enPin,OUTPUT);
-  digitalWrite(enPin,LOW);
+    pinMode(enPin,OUTPUT);
+    digitalWrite(enPin,LOW);
 
-  pinMode(btnplus, INPUT);
-  pinMode(btnmoins, INPUT);
+    pinMode(btnplus, INPUT);
+    pinMode(btnmoins, INPUT);
+
+    pinMode(btnquatre,OUTPUT);
+    pinMode(btnun,OUTPUT);
+    pinMode(btnhuit,OUTPUT);
+    pinMode(btndeux,OUTPUT);
 }
 
 
 void loop() {  
-
-while(digitalRead(btnplus)){
-  if(pairetableau<=9){
-  pairetableau=pairetableau+1;
-  while(digitalRead(btnplus)){}
-  }}
-
-  while(digitalRead(btnmoins)){
-  if(pairetableau>0){
-  pairetableau=pairetableau-1;
-  while(digitalRead(btnmoins)){}
-  }}
-Serial.println(" paire tableau");
-Serial.println(pairetableau+1);   
- Serial.println(" "); 
-  if ( radio.available() )                                           // si des données sont présentes
-  {
-    radio.read( TableauPaire, sizeof(TableauPaire) );                        // lecture des données
-    Serial.print(TableauPaire[pairetableau][1]);                                     // affichage dans le moniteur série
-   Serial.println(verif[pairetableau][1]);
-    
-   
-    while(verif[pairetableau][1]<TableauPaire[pairetableau][1]){
-      verif[pairetableau][1]=verif[pairetableau][1]+5;
-      augmentation();                                          //aumgentation hauteur barre
-      
-  
-    }
-
-    while(verif[pairetableau][1]>TableauPaire[pairetableau][1]){
-      verif[pairetableau][1]=verif[pairetableau][1]-5;
-      diminution();                                          //diminution hauteur barre
-      
-  
-    }
-
-
  
-}
+  while(digitalRead(btnplus)){
+    if(pairetableau<=6){
+      pairetableau=pairetableau+1;
+      while(digitalRead(btnplus)){}
+    }
+  }
+  
+  while(digitalRead(btnmoins)){
+    if(pairetableau>0){
+      pairetableau=pairetableau-1;
+      while(digitalRead(btnmoins)){}
+    }
+  }
+
+  Serial.println(pairetableau);
+  int num = pairetableau+1;
+  Serial.println("num");
+  Serial.println(num);
+   Serial.println(TableauPaire[pairetableau][0]);
+  Serial.println(TableauPaire[7][1]);
+  switch (num) {
+    case 1:
+       digitalWrite(btnun,HIGH);
+       digitalWrite(btnhuit,LOW);
+       digitalWrite(btndeux,LOW);
+       digitalWrite(btnquatre,LOW);
+        
+    break;
+    case 2:
+       digitalWrite(btnun,LOW);
+       digitalWrite(btndeux,HIGH);
+       digitalWrite(btnhuit,LOW);
+       digitalWrite(btnquatre,LOW);
+    break;
+    case 3:
+       digitalWrite(btnun,HIGH);
+       digitalWrite(btndeux,HIGH);
+       digitalWrite(btnhuit,LOW);
+       digitalWrite(btnquatre,LOW);
+    break;
+    case 4:
+       digitalWrite(btnun,LOW);
+       digitalWrite(btnhuit,LOW);
+       digitalWrite(btndeux,LOW);
+       digitalWrite(btnquatre,HIGH);
+    
+    break;
+    case 5:
+       digitalWrite(btnquatre,HIGH);
+       digitalWrite(btnun,HIGH);
+       digitalWrite(btnhuit,LOW);
+       digitalWrite(btndeux,LOW);
+    break;
+    case 6:
+     digitalWrite(btnquatre,HIGH);
+     digitalWrite(btndeux,HIGH);
+     digitalWrite(btnun,LOW);
+     digitalWrite(btnhuit,LOW);
+    break;
+    case 7:
+     digitalWrite(btnquatre,HIGH);
+     digitalWrite(btndeux,HIGH);
+     digitalWrite(btnun,HIGH);
+     digitalWrite(btnhuit,LOW);
+    break;
+    case 8:
+     digitalWrite(btnhuit,HIGH);
+     digitalWrite(btnun,LOW);
+     digitalWrite(btnquatre,LOW);
+     digitalWrite(btndeux,LOW);
+    break;
+    case 9:
+     digitalWrite(btnhuit,HIGH);
+     digitalWrite(btnun,HIGH);
+     digitalWrite(btnquatre,LOW);
+     digitalWrite(btndeux,LOW);
+    break;
+ }
+  
+
+  
+ if ( radio.available() )                                           // si des données sont présentes
+ {
+   radio.read( TableauPaire, sizeof(TableauPaire) );                        // lecture des données
+   //Serial.print(TableauPaire[pairetableau][1]);                                     // affichage dans le moniteur série
+  //Serial.println(verif[pairetableau][1]);
+   
+  
+   while(verif[pairetableau][1]<TableauPaire[pairetableau][1]){
+     verif[pairetableau][1]=verif[pairetableau][1]+5;
+     augmentation();    
+   } 
+   while(verif[pairetableau][1]>TableauPaire[pairetableau][1]){
+     verif[pairetableau][1]=verif[pairetableau][1]-5;
+     diminution();                                          //diminution hauteur barre
+   } 
+ 
+ }
 
 }
+
+
 
 
 void augmentation(){
