@@ -4,6 +4,7 @@ depuis une autre carte Arduino et les affiche dans le moniteur série.*/
 #include <SPI.h>                                                       // appel des bibliothèques
 #include <nRF24L01.h>
 #include <RF24.h>
+#include <EEPROM.h>
 
 #define CE_PIN   9
 #define CSN_PIN 10
@@ -26,6 +27,12 @@ const int bit_A = 2;
 const int bit_B = 3;
 const int bit_C = 4;
 const int bit_D = 5;
+
+boolean dmrg = false;
+
+const int depart = 30;
+int a = 0;//adresse de la case value
+byte value;
 
 void setup()   
 {
@@ -55,11 +62,26 @@ void setup()
     digitalWrite(bit_B, LOW);
     digitalWrite(bit_C, LOW);
     digitalWrite(bit_D, LOW);
+
+    
 }
 
 
 void loop() {  
- 
+  int num = pairetableau+1;
+  afficher(num);
+  
+  value = EEPROM.read(a);
+  //remise à 0.
+  if(dmrg==false){
+     while(value>depart){
+       diminution();
+       value=value-5 ;                                         //diminution hauteur barre
+    } 
+    dmrg=true;
+  }
+
+  
   while(digitalRead(btnplus)){
     if(pairetableau<=6){
       pairetableau=pairetableau+1;
@@ -73,10 +95,6 @@ void loop() {
       while(digitalRead(btnmoins)){}
     }
   }
-
-  Serial.println(pairetableau);
-  int num = pairetableau+1;
-  afficher(num);
   
  if ( radio.available() )                                           // si des données sont présentes
  {
@@ -95,28 +113,36 @@ void loop() {
    } 
  
  }
-
+ value=verif[pairetableau][1] ;
+ EEPROM.write(a, value);
 }
 
 
 
 
 void augmentation(){
-  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  digitalWrite(stepPin,HIGH);
+  delay(1000);
+   digitalWrite(stepPin,LOW);
+    delay(1000);
+ /* digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   // Makes 200 pulses for making one full cycle rotation
   for(int x = 0; x < 1600; x++) {
     digitalWrite(stepPin,HIGH); 
     delayMicroseconds(500); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(500); 
-  }
+  }*/
   }
 
 
 
 void diminution(){
-  
-      digitalWrite(dirPin,LOW); //Changes the rotations direction
+   digitalWrite(dirPin,HIGH);
+  delay(1000);
+   digitalWrite(dirPin,LOW);
+    delay(1000);
+    /*  digitalWrite(dirPin,LOW); //Changes the rotations direction
   // Makes 400 pulses for making two full cycle rotation
   
   for(int x = 0; x < 1600; x++) {
@@ -124,7 +150,8 @@ void diminution(){
     delayMicroseconds(500);
     digitalWrite(stepPin,LOW);
     delayMicroseconds(500);
-  } }
+  } */
+ }
 
 
   void afficher(char chiffre)
@@ -156,4 +183,6 @@ void diminution(){
         digitalWrite(bit_A, HIGH);
         chiffre = chiffre - 1;
     }
+
+    
 }
