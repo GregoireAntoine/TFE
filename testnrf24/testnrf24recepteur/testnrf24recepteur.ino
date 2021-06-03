@@ -14,7 +14,7 @@ RF24 radio(CE_PIN, CSN_PIN);                               // création de l'obj
 
 int TableauPaire[10][2]; // tableau des paires recu                                      
 int verif[10][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30},{10, 30}}; // tableau des paires;                                        //descente moteur
-
+int pairetableau=0;
 const int stepPin = 7;  //5
 const int dirPin = 6;   //2
 const int enPin = 8;    //8 
@@ -22,15 +22,10 @@ const int enPin = 8;    //8
 const int btnplus=A4;    
 const int btnmoins=A3;  
 
-const int btnun = 2;
-const int btndeux = 3;
-const int btnquatre = 4 ;
-const int btnhuit = 5;
-
-
-
-int pairetableau=0;
-
+const int bit_A = 2;
+const int bit_B = 3;
+const int bit_C = 4;
+const int bit_D = 5;
 
 void setup()   
 {
@@ -49,10 +44,17 @@ void setup()
     pinMode(btnplus, INPUT);
     pinMode(btnmoins, INPUT);
 
-    pinMode(btnquatre,OUTPUT);
-    pinMode(btnun,OUTPUT);
-    pinMode(btnhuit,OUTPUT);
-    pinMode(btndeux,OUTPUT);
+     // on met les broches en sorties
+    pinMode(bit_A, OUTPUT);
+    pinMode(bit_B, OUTPUT);
+    pinMode(bit_C, OUTPUT);
+    pinMode(bit_D, OUTPUT);
+
+    // on commence par écrire le chiffre 0, donc toutes les sorites à l'état bas
+    digitalWrite(bit_A, LOW);
+    digitalWrite(bit_B, LOW);
+    digitalWrite(bit_C, LOW);
+    digitalWrite(bit_D, LOW);
 }
 
 
@@ -74,70 +76,7 @@ void loop() {
 
   Serial.println(pairetableau);
   int num = pairetableau+1;
-  Serial.println("num");
-  Serial.println(num);
-   Serial.println(TableauPaire[pairetableau][0]);
-  Serial.println(TableauPaire[7][1]);
-  switch (num) {
-    case 1:
-       digitalWrite(btnun,HIGH);
-       digitalWrite(btnhuit,LOW);
-       digitalWrite(btndeux,LOW);
-       digitalWrite(btnquatre,LOW);
-        
-    break;
-    case 2:
-       digitalWrite(btnun,LOW);
-       digitalWrite(btndeux,HIGH);
-       digitalWrite(btnhuit,LOW);
-       digitalWrite(btnquatre,LOW);
-    break;
-    case 3:
-       digitalWrite(btnun,HIGH);
-       digitalWrite(btndeux,HIGH);
-       digitalWrite(btnhuit,LOW);
-       digitalWrite(btnquatre,LOW);
-    break;
-    case 4:
-       digitalWrite(btnun,LOW);
-       digitalWrite(btnhuit,LOW);
-       digitalWrite(btndeux,LOW);
-       digitalWrite(btnquatre,HIGH);
-    
-    break;
-    case 5:
-       digitalWrite(btnquatre,HIGH);
-       digitalWrite(btnun,HIGH);
-       digitalWrite(btnhuit,LOW);
-       digitalWrite(btndeux,LOW);
-    break;
-    case 6:
-     digitalWrite(btnquatre,HIGH);
-     digitalWrite(btndeux,HIGH);
-     digitalWrite(btnun,LOW);
-     digitalWrite(btnhuit,LOW);
-    break;
-    case 7:
-     digitalWrite(btnquatre,HIGH);
-     digitalWrite(btndeux,HIGH);
-     digitalWrite(btnun,HIGH);
-     digitalWrite(btnhuit,LOW);
-    break;
-    case 8:
-     digitalWrite(btnhuit,HIGH);
-     digitalWrite(btnun,LOW);
-     digitalWrite(btnquatre,LOW);
-     digitalWrite(btndeux,LOW);
-    break;
-    case 9:
-     digitalWrite(btnhuit,HIGH);
-     digitalWrite(btnun,HIGH);
-     digitalWrite(btnquatre,LOW);
-     digitalWrite(btndeux,LOW);
-    break;
- }
-  
-
+  afficher(num);
   
  if ( radio.available() )                                           // si des données sont présentes
  {
@@ -186,4 +125,35 @@ void diminution(){
     digitalWrite(stepPin,LOW);
     delayMicroseconds(500);
   } }
-    
+
+
+  void afficher(char chiffre)
+{
+    // on met à zéro tout les bits du décodeur
+    digitalWrite(bit_A, LOW);
+    digitalWrite(bit_B, LOW);
+    digitalWrite(bit_C, LOW);
+    digitalWrite(bit_D, LOW);
+
+    // On allume les bits nécessaires
+    if(chiffre >= 8)
+    {
+        digitalWrite(bit_D, HIGH);
+        chiffre = chiffre - 8;
+    }
+    if(chiffre >= 4)
+    {
+        digitalWrite(bit_C, HIGH);
+        chiffre = chiffre - 4;
+    }
+    if(chiffre >= 2)
+    {
+        digitalWrite(bit_B, HIGH);
+        chiffre = chiffre - 2;
+    }
+    if(chiffre >= 1)
+    {
+        digitalWrite(bit_A, HIGH);
+        chiffre = chiffre - 1;
+    }
+}
