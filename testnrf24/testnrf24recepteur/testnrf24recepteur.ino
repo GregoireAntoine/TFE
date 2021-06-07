@@ -14,7 +14,6 @@ const uint64_t adresse = 0xE8E8F0F0E1LL;        // adresse du canal de communica
 RF24 radio(CE_PIN, CSN_PIN);                               // création de l'objet radio
 
 int TableauPaire[10][2]; // tableau des paires recu                                      
-int verif[10][2] = { {1, 30},{2, 30},{3, 30},{4, 30},{5, 30},{6, 30},{7, 30},{8, 30},{9, 30},{10, 30}}; // tableau des paires;                                        //descente moteur
 int pairetableau=0;
 const int stepPin = 7;  //5
 const int dirPin = 6;   //2
@@ -70,9 +69,10 @@ void setup()
 void loop() {  
   int num = pairetableau+1;
   afficher(num);
-  
+
   value = EEPROM.read(a);
   //remise à 0.
+   
   if(dmrg==false){
      while(value>depart){
        diminution();
@@ -81,11 +81,12 @@ void loop() {
     dmrg=true;
   }
 
-  
+   Serial.println(value);
   while(digitalRead(btnplus)){
     if(pairetableau<=6){
       pairetableau=pairetableau+1;
       while(digitalRead(btnplus)){}
+      verifchangement();
     }
   }
   
@@ -95,25 +96,22 @@ void loop() {
       while(digitalRead(btnmoins)){}
     }
   }
-  
+ 
  if ( radio.available() )                                           // si des données sont présentes
  {
    radio.read( TableauPaire, sizeof(TableauPaire) );                        // lecture des données
-   //Serial.print(TableauPaire[pairetableau][1]);                                     // affichage dans le moniteur série
-  //Serial.println(verif[pairetableau][1]);
-   
   
-   while(verif[pairetableau][1]<TableauPaire[pairetableau][1]){
-     verif[pairetableau][1]=verif[pairetableau][1]+5;
+   while(value<TableauPaire[pairetableau][1]){
+     value=value+5;
      augmentation();    
    } 
-   while(verif[pairetableau][1]>TableauPaire[pairetableau][1]){
-     verif[pairetableau][1]=verif[pairetableau][1]-5;
+   while(value>TableauPaire[pairetableau][1]){
+     value=value-5;
      diminution();                                          //diminution hauteur barre
    } 
  
  }
- value=verif[pairetableau][1] ;
+ 
  EEPROM.write(a, value);
 }
 
@@ -121,38 +119,40 @@ void loop() {
 
 
 void augmentation(){
-  digitalWrite(stepPin,HIGH);
-  delay(1000);
-   digitalWrite(stepPin,LOW);
-    delay(1000);
- /* digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+  digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   // Makes 200 pulses for making one full cycle rotation
-  for(int x = 0; x < 1600; x++) {
+  for(int x = 0; x < 2500; x++) {
     digitalWrite(stepPin,HIGH); 
     delayMicroseconds(500); 
     digitalWrite(stepPin,LOW); 
     delayMicroseconds(500); 
-  }*/
+  }
   }
 
 
 
 void diminution(){
-   digitalWrite(dirPin,HIGH);
-  delay(1000);
-   digitalWrite(dirPin,LOW);
-    delay(1000);
-    /*  digitalWrite(dirPin,LOW); //Changes the rotations direction
+  digitalWrite(dirPin,LOW); //Changes the rotations direction
   // Makes 400 pulses for making two full cycle rotation
   
-  for(int x = 0; x < 1600; x++) {
+  for(int x = 0; x < 2500; x++) {
     digitalWrite(stepPin,HIGH);
     delayMicroseconds(500);
     digitalWrite(stepPin,LOW);
     delayMicroseconds(500);
-  } */
+  } 
  }
 
+void verifchangement(){
+  while(value<TableauPaire[pairetableau][1]){
+    value=value+5;
+    augmentation();
+    }
+   while(value>TableauPaire[pairetableau][1]){
+    value=value-5;
+    diminution();
+    }
+  }
 
   void afficher(char chiffre)
 {
@@ -182,7 +182,5 @@ void diminution(){
     {
         digitalWrite(bit_A, HIGH);
         chiffre = chiffre - 1;
-    }
-
-    
+    }   
 }
