@@ -37,7 +37,8 @@ RF24 radio(CE_PIN, CSN_PIN);                                   // création de l
 
 void setup()
 { Serial.begin(9600);         
-  radio.begin();                                                              // initialisation du module NRF24L01
+  radio.begin();                                              // initialisation du module NRF24L01
+  radio.setPALevel(RF24_PA_MAX);                              // définition de la puissance de transmission
   radio.openWritingPipe(adresse);                             // configuration du canal de communication du module NRF24L01
   lcd.init();
   lcd.backlight();
