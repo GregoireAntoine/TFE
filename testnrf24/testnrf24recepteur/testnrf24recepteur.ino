@@ -100,10 +100,6 @@ void loop() {
  if ( radio.available() )                                           // si des données sont présentes
  {
    radio.read( TableauPaire, sizeof(TableauPaire) );                        // lecture des données
-   //Serial.print(TableauPaire[pairetableau][1]);                                     // affichage dans le moniteur série
-  //Serial.println(verif[pairetableau][1]);
-   
-  
    while(value<TableauPaire[pairetableau][1]){
      value=value+5;
      augmentation();    
@@ -118,9 +114,6 @@ void loop() {
  EEPROM.write(a, value);
 }
 
-
-
-
 void augmentation(){
   digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
   // Makes 200 pulses for making one full cycle rotation
@@ -131,8 +124,6 @@ void augmentation(){
     delayMicroseconds(500); 
   }
   }
-
-
 
 void diminution(){
 
