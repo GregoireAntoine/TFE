@@ -1,0 +1,32 @@
+/*
+ if(EB==HIGH and EP ==HIGH){digitalWrite(9,HIGH);}else{digitalWrite(9,LOW);}
+
+
+
+
+  while(EP==LOW and EB==LOW){}
+  if(EP==0 and EB==HIGH){
+    while(EP!=LOW){}
+    }
+
+   if (EP==LOW and EB==LOW){
+    int x=0;
+    while(x!=60){
+      x=x+1;
+      delay(1000);
+    }
+
+
+   if (EP==HIGH and EB==HIGH){
+    delay(60000);
+    while(EP==LOW){}
+    }
+
+
+  
+  
+ // while(digitalRead(3)==HIGH){
+ //   digitalWrite(8,HIGH);
+ //   }
+    
+}*/
